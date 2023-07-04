@@ -15,6 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import {useState} from "react";
 import React from "react";
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 // javascript plugin used to create scrollbars on windows
@@ -25,6 +26,7 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
+import AuthPage from "layouts/AuthPage/AuthPage";
 
 import routes from "routes.js";
 
@@ -34,6 +36,16 @@ import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 var ps;
 
 function Admin(props) {
+
+  //! MYCODE
+  const [user, setUser] = useState(null);
+  // Call a function to check if user is logged in and set user state
+  useEffect(() => {
+    // Assuming you have a function that returns the user from local storage (after decoding JWT)
+    const loggedInUser = getLoggedInUser();
+    setUser(loggedInUser);
+  }, []);
+  //! END MYCODE
   const location = useLocation();
   const mainPanelRef = React.useRef(null);
   const [sidebarOpened, setsidebarOpened] = React.useState(
@@ -118,7 +130,11 @@ function Admin(props) {
                 sidebarOpened={sidebarOpened}
               />
               <Routes>
-                {getRoutes(routes)}
+    //! MYCODE
+                { user 
+                ? getRoutes(routes)
+                : <AuthPage />}
+     //! END MYCODE
                 <Route
                   path="/"
                   element={<Navigate to="/admin/dashboard" replace />}
